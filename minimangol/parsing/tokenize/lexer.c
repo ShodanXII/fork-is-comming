@@ -1,8 +1,14 @@
 #include "../../minishell.h"
 
-
-
 static int is_operator(char *token);
+
+void flag_error(char *str)
+{
+    // ft_putstr_fd("minishell: syntax error near unexpected token `", 2);
+    // ft_putstr_fd(str, 2);
+    ft_putstr_fd("'\n", 1);
+    // prompt();// to do
+}
 
 void ft_free_split(char **tokens)
 {
@@ -16,13 +22,12 @@ void ft_free_split(char **tokens)
 }
 void check_s_char(char **token_value, int *token_type)
 {
-    // Keep only parenthesis checks here (if needed)
     if (ft_strcmp(*token_value, "(") == 0)
         *token_type = TOKEN_LPAREN;
     else if (ft_strcmp(*token_value, ")") == 0)
         *token_type = TOKEN_RPAREN;
     else
-        *token_type = TOKEN_COMMAND; // Default to word
+        *token_type = TOKEN_COMMAND;
 }
 void free_tokens(t_token *tokens)
 {
@@ -137,7 +142,7 @@ static void parse_redirection(t_parser *parser, t_command *cmd)
 {
     t_redir *new = malloc(sizeof(t_redir));
     new->type = parser->current->type;
-    parser->current = parser->current->next;  // Move to filename token
+    parser->current = parser->current->next;
 
     if (!parser->current || parser->current->type != TOKEN_WORD) {
         ft_putstr_fd("minishell: syntax error near unexpected token\n", 2);
@@ -147,12 +152,13 @@ static void parse_redirection(t_parser *parser, t_command *cmd)
 
     new->file = ft_strdup(parser->current->value);
     new->next = cmd->redirs;
-    cmd->redirs = new;  // Add to front of redirections list
-    parser->current = parser->current->next;  // Move past filename
+    cmd->redirs = new;
+    parser->current = parser->current->next;
 }
 
 static void parse_command(t_parser *parser, t_command *cmd)
 {
+    write(1, "arg_count: ", 12);
     int arg_count = 0;
     int capacity = 16;
     cmd->args = malloc(capacity * sizeof(char *));
@@ -195,24 +201,20 @@ void test_parser(char *input)
     
     parse_command(&parser, &cmd);
     print_command(&cmd);
-    
-    // Cleanup
     free(cmd.args);
-    // Add redirection cleanup (implementation needed)
     free_tokens(tokens);
 }
 
 int main()
 {
-    char *input = "echo hello | world | tr ' ' '-'";
+    char *input = "ls -la > ";
     t_token *tokens = tokenize(input);
     check_syntax_errors(tokens);
     t_parser parser = {tokens};
     t_ast_node *ast = parse(&parser);
     
     print_ast(ast, 0);
-    
-    // Cleanup code here
+    // cleaner(); // to do!!    
     return 0;
 }
 // void print_tokens(t_token *tokens)

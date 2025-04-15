@@ -3,13 +3,12 @@
 t_ast_node *parse_command(t_parser *parser);
 t_ast_node *parse_pipe(t_parser *parser);
 
-// Main entry point for parsing
 t_ast_node *parse(t_parser *parser)
 {
     return parse_pipe(parser);
 }
 
-// Handle pipe sequences
+//pipe
 t_ast_node *parse_pipe(t_parser *parser)
 {
     t_ast_node *left = parse_command(parser);
@@ -26,9 +25,10 @@ t_ast_node *parse_pipe(t_parser *parser)
     return left;
 }
 
-// Handle commands with arguments and redirections
+//arguments and redirections
 t_ast_node *parse_command(t_parser *parser)
 {
+    // write(1, "parse_command\n", 15);
     t_ast_node *node = malloc(sizeof(t_ast_node));
     node->e_type = AST_COMMAND;
     node->args = NULL;
@@ -44,7 +44,6 @@ t_ast_node *parse_command(t_parser *parser)
     {
         if (parser->current->type >= TOKEN_REDIR_IN)
         {
-            // Handle redirection
             t_redir *new = malloc(sizeof(t_redir));
             new->type = parser->current->type;
             parser->current = parser->current->next;
@@ -59,16 +58,17 @@ t_ast_node *parse_command(t_parser *parser)
             else
             {
                 ft_putstr_fd("minishell: syntax error\n", 2);
+                // printf("Expected a file name after redirection\n");
                 free(new);
+                // return ;
             }
         }
         else
         {
-            // Handle command arguments
             if (cmd.arg_count >= capacity)
             {
                 capacity *= 2;
-                cmd.args = realloc(cmd.args, capacity * sizeof(char *));
+                cmd.args = ft_realloc(cmd.args, capacity);
             }
             cmd.args[cmd.arg_count++] = ft_strdup(parser->current->value);
             parser->current = parser->current->next;
