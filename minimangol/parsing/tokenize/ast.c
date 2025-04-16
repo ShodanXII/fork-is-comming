@@ -1,21 +1,21 @@
 #include "../../minishell.h"
 
-t_ast_node *parse_command(t_parser *parser);
-t_ast_node *parse_pipe(t_parser *parser);
+t_ast *parse_command(t_parser *parser);
+t_ast *parse_pipe(t_parser *parser);
 
-t_ast_node *parse(t_parser *parser)
+t_ast *parse(t_parser *parser)
 {
     return parse_pipe(parser);
 }
 
 //pipe
-t_ast_node *parse_pipe(t_parser *parser)
+t_ast *parse_pipe(t_parser *parser)
 {
-    t_ast_node *left = parse_command(parser);
+    t_ast *left = parse_command(parser);
     
     if (parser->current && parser->current->type == TOKEN_PIPE)
     {
-        t_ast_node *node = malloc(sizeof(t_ast_node));
+        t_ast *node = malloc(sizeof(t_ast));
         node->e_type = AST_PIPE;
         node->left = left;
         parser->current = parser->current->next;
@@ -26,10 +26,10 @@ t_ast_node *parse_pipe(t_parser *parser)
 }
 
 //arguments and redirections
-t_ast_node *parse_command(t_parser *parser)
+t_ast *parse_command(t_parser *parser)
 {
     // write(1, "parse_command\n", 15);
-    t_ast_node *node = malloc(sizeof(t_ast_node));
+    t_ast *node = malloc(sizeof(t_ast));
     node->e_type = AST_COMMAND;
     node->args = NULL;
     node->redirs = NULL;
@@ -82,7 +82,7 @@ t_ast_node *parse_command(t_parser *parser)
 }
 
 // Simple print function
-void print_ast(t_ast_node *node, int level)
+void print_ast(t_ast *node, int level)
 {
     if (!node) return;
     

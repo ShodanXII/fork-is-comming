@@ -211,7 +211,7 @@ int main()
     t_token *tokens = tokenize(input);
     check_syntax_errors(tokens);
     t_parser parser = {tokens};
-    t_ast_node *ast = parse(&parser);
+    t_ast *ast = parse(&parser);
     
     print_ast(ast, 0);
     // cleaner(); // to do!!    
@@ -228,10 +228,10 @@ int main()
 // }
 
 /* Parse pipe sequences */
-// t_ast_node *parse_pipeline(t_token **tokens)
+// t_ast *parse_pipeline(t_token **tokens)
 // {
-//     t_ast_node *left;
-//     t_ast_node *node;
+//     t_ast *left;
+//     t_ast *node;
     
 //     left = parse_command(tokens);
     
@@ -249,9 +249,9 @@ int main()
 // }
 
 /* Parse simple commands */
-// t_ast_node *parse_command(t_token **tokens)
+// t_ast *parse_command(t_token **tokens)
 // {
-//     t_ast_node *node;
+//     t_ast *node;
 //     int arg_count;
 //     t_token *current;
 //     int i;

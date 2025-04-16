@@ -39,10 +39,10 @@ typedef struct s_ast_node {
     struct s_ast_node *right;
     struct s_ast_node *next;
     int                fd[2];
-} t_ast_node;
+} t_ast;
 
 typedef struct s_stack {
-    t_ast_node       *token;
+    t_ast       *token;
     struct s_stack   *next;
 } t_stack;
 
@@ -54,9 +54,9 @@ static void skip_whitespace(const char **str)
 }
 
 // Helper to create a new token node
-static t_ast_node *new_token_node(t_token_type type, const char *value)
+static t_ast *new_token_node(t_token_type type, const char *value)
 {
-    t_ast_node *node = malloc(sizeof(t_ast_node));
+    t_ast *node = malloc(sizeof(t_ast));
     if (!node)
         return NULL;
     node->e_token_type = type;
@@ -72,7 +72,7 @@ static t_ast_node *new_token_node(t_token_type type, const char *value)
 }
 
 // Get the next token from input string
-static t_ast_node *get_token(const char **input)
+static t_ast *get_token(const char **input)
 {
     skip_whitespace(input);
 
@@ -142,14 +142,14 @@ static t_ast_node *get_token(const char **input)
 }
 
 // Main lexer function
-t_ast_node *lexer(const char *input)
+t_ast *lexer(const char *input)
 {
-    t_ast_node *head = NULL;
-    t_ast_node *tail = NULL;
+    t_ast *head = NULL;
+    t_ast *tail = NULL;
 
     while (*input)
     {
-        t_ast_node *token = get_token(&input);
+        t_ast *token = get_token(&input);
         if (!token)
             continue;
 
@@ -165,7 +165,7 @@ t_ast_node *lexer(const char *input)
 }
 
 // Helper functions for the algorithm
-void push(t_stack **stack, t_ast_node *node)
+void push(t_stack **stack, t_ast *node)
 {
     t_stack *new_node = malloc(sizeof(t_stack));
     if (!new_node)
@@ -176,20 +176,20 @@ void push(t_stack **stack, t_ast_node *node)
     *stack = new_node;
 }
 
-t_ast_node *pop(t_stack **stack)
+t_ast *pop(t_stack **stack)
 {
     if (!*stack)
         return NULL;
     
     t_stack *temp = *stack;
-    t_ast_node *node = temp->token;
+    t_ast *node = temp->token;
     *stack = temp->next;
     free(temp);
     
     return node;
 }
 
-t_ast_node *peek(t_stack *stack)
+t_ast *peek(t_stack *stack)
 {
     if (!stack)
         return NULL;
@@ -203,7 +203,7 @@ bool is_empty(t_stack *stack)
 }
 
 // Function to add node to the output queue
-void add_to_queue(t_ast_node **queue, t_ast_node *node)
+void add_to_queue(t_ast **queue, t_ast *node)
 {
     if (!*queue)
     {
@@ -211,19 +211,19 @@ void add_to_queue(t_ast_node **queue, t_ast_node *node)
         return;
     }
 
-    t_ast_node *current = *queue;
+    t_ast *current = *queue;
     while (current->next)
         current = current->next;
     current->next = node;
 }
 
 // Function to pop node from the output queue
-t_ast_node *pop_from_queue(t_ast_node **queue)
+t_ast *pop_from_queue(t_ast **queue)
 {
     if (!*queue)
         return NULL;
     
-    t_ast_node *node = *queue;
+    t_ast *node = *queue;
     *queue = node->next;
     node->next = NULL;
     
@@ -231,9 +231,9 @@ t_ast_node *pop_from_queue(t_ast_node **queue)
 }
 
 // Initialize a new AST node from a token
-t_ast_node *init_node(t_ast_node *token, char **args)
+t_ast *init_node(t_ast *token, char **args)
 {
-    t_ast_node *node = malloc(sizeof(t_ast_node));
+    t_ast *node = malloc(sizeof(t_ast));
     if (!node)
         return NULL;
     
@@ -254,7 +254,7 @@ t_ast_node *init_node(t_ast_node *token, char **args)
 }
 
 // Function to copy arguments (simplified version for test)
-char **copy_args(t_ast_node **token)
+char **copy_args(t_ast **token)
 {
     // In a real implementation, this would parse and copy the arguments
     // For testing, we'll just create a dummy array with the command
@@ -269,14 +269,14 @@ char **copy_args(t_ast_node **token)
 }
 
 // Function to build AST from postfix notation
-t_ast_node *build_ast_from_postfix(t_ast_node **postfix_queue)
+t_ast *build_ast_from_postfix(t_ast **postfix_queue)
 {
     t_stack *node_stack = NULL;
-    t_ast_node *current;
-    t_ast_node *root = NULL;
+    t_ast *current;
+    t_ast *root = NULL;
 
     // Create a copy of the queue to iterate through
-    t_ast_node *queue_copy = *postfix_queue;
+    t_ast *queue_copy = *postfix_queue;
     *postfix_queue = NULL; // Clear the original queue
     
     while (queue_copy)
@@ -304,7 +304,7 @@ t_ast_node *build_ast_from_postfix(t_ast_node **postfix_queue)
                 continue;
             }
             
-            t_ast_node *right = pop(&node_stack);
+            t_ast *right = pop(&node_stack);
             
             if (is_empty(node_stack))
             {
@@ -314,7 +314,7 @@ t_ast_node *build_ast_from_postfix(t_ast_node **postfix_queue)
                 continue;
             }
             
-            t_ast_node *left = pop(&node_stack);
+            t_ast *left = pop(&node_stack);
             
             current->left = left;
             current->right = right;
@@ -341,19 +341,19 @@ t_ast_node *build_ast_from_postfix(t_ast_node **postfix_queue)
 }
 
 // Main AST building function
-t_ast_node *create_ast_from_tokens(t_ast_node *tokens)
+t_ast *create_ast_from_tokens(t_ast *tokens)
 {
     t_stack *operator_stack = NULL;
-    t_ast_node *output_queue = NULL;
-    t_ast_node *current = tokens;
-    t_ast_node *ast = NULL;
+    t_ast *output_queue = NULL;
+    t_ast *current = tokens;
+    t_ast *ast = NULL;
     
     // First pass: Convert infix to postfix using shunting yard algorithm
     while (current)
     {
         if (current->e_token_type == WORD)
         {
-            t_ast_node *cmd_node = init_node(current, copy_args(&current));
+            t_ast *cmd_node = init_node(current, copy_args(&current));
             add_to_queue(&output_queue, cmd_node);
         }
         else if (current->e_token_type == PIPE || current->e_token_type == AND || 
@@ -365,7 +365,7 @@ t_ast_node *create_ast_from_tokens(t_ast_node *tokens)
                    peek(operator_stack)->e_token_type != LPAREN &&
                    peek(operator_stack)->e_precedence <= current->e_precedence)
             {
-                t_ast_node *op = pop(&operator_stack);
+                t_ast *op = pop(&operator_stack);
                 add_to_queue(&output_queue, init_node(op, NULL));
             }
             
@@ -380,7 +380,7 @@ t_ast_node *create_ast_from_tokens(t_ast_node *tokens)
             while (!is_empty(operator_stack) && 
                    peek(operator_stack)->e_token_type != LPAREN)
             {
-                t_ast_node *op = pop(&operator_stack);
+                t_ast *op = pop(&operator_stack);
                 add_to_queue(&output_queue, init_node(op, NULL));
             }
             
@@ -394,7 +394,7 @@ t_ast_node *create_ast_from_tokens(t_ast_node *tokens)
     // Pop any remaining operators to the output queue
     while (!is_empty(operator_stack))
     {
-        t_ast_node *op = pop(&operator_stack);
+        t_ast *op = pop(&operator_stack);
         if (op->e_token_type == LPAREN || op->e_token_type == RPAREN)
         {
             fprintf(stderr, "Error: Mismatched parentheses\n");
@@ -409,7 +409,7 @@ t_ast_node *create_ast_from_tokens(t_ast_node *tokens)
     return ast;
 }
 
-void add_node(t_ast_node **head, t_ast_node *new_node)
+void add_node(t_ast **head, t_ast *new_node)
 {
     if (!*head)
     {
@@ -417,14 +417,14 @@ void add_node(t_ast_node **head, t_ast_node *new_node)
         return;
     }
     
-    t_ast_node *current = *head;
+    t_ast *current = *head;
     while (current->next)
         current = current->next;
     
     current->next = new_node;
 }
 
-void free_ast(t_ast_node *node)
+void free_ast(t_ast *node)
 {
     if (!node)
         return;
@@ -451,13 +451,13 @@ void free_ast(t_ast_node *node)
 int main()
 {
 	
-    t_ast_node *tokens = lexer("ls -la >> file | (cd || clear) && exit");
+    t_ast *tokens = lexer("ls -la >> file | (cd || clear) && exit");
     if (tokens == NULL) {
         fprintf(stderr, "Error: No tokens to parse\n");
         return 1;
     }
 
-    t_ast_node *ast = create_ast_from_tokens(tokens);
+    t_ast *ast = create_ast_from_tokens(tokens);
     if (ast == NULL) {
         fprintf(stderr, "Error: Failed to create AST\n");
         return 1;
