@@ -56,18 +56,6 @@ void create_token(t_token **head, t_token **current, char *value, int type)
     *current = new_token;
 }
 
-// int	is_operator(char *token)
-// {
-// 	return (ft_strcmp(token, "|") == 0
-// 		|| ft_strcmp(token, "&&") == 0
-// 		|| ft_strcmp(token, "||") == 0
-// 		|| ft_strcmp(token, ">") == 0
-// 		|| ft_strcmp(token, "<") == 0
-// 		|| ft_strcmp(token, ">>") == 0
-// 		|| ft_strcmp(token, "<<") == 0
-// 		|| ft_strcmp(token, "(") == 0
-// 		|| ft_strcmp(token, ")") == 0);
-// }
 
 static void	add_token(t_token **head, t_token **curr, char *value, int type)
 {
@@ -85,23 +73,6 @@ static void	add_token(t_token **head, t_token **curr, char *value, int type)
 	*curr = new;
 }
 
-// static void	process_word(char **tokens, t_token **head, t_token **curr, int *i)
-// {
-// 	char	*cmd;
-// 	char	*tmp;
-
-// 	cmd = ft_strdup(tokens[*i]);
-// 	while (tokens[++(*i)] && !is_operator(tokens[*i]))
-// 	{
-// 		tmp = ft_strjoin(cmd, " ");
-// 		free(cmd);
-// 		cmd = ft_strjoin(tmp, tokens[*i]);
-// 		free(tmp);
-// 	}
-// 	(*i)--;
-// 	add_token(head, curr, cmd, TOKEN_COMMAND);
-// 	free(cmd);
-// }
 
 t_token	*tokenize(char *input)
 {
@@ -181,29 +152,7 @@ static void parse_command(t_parser *parser, t_command *cmd)
     cmd->args[arg_count] = NULL;
 }
 
-/* Test Function */
-void print_command(t_command *cmd)
-{
-    printf("Command arguments:\n");
-    for (int i = 0; cmd->args[i]; i++)
-        printf("  [%d] %s\n", i, cmd->args[i]);
-    
-    printf("Redirections:\n");
-    for (t_redir *r = cmd->redirs; r; r = r->next)
-        printf("  Type %d -> %s\n", r->type, r->file);
-}
 
-void test_parser(char *input)
-{
-    t_token *tokens = tokenize(input);
-    t_parser parser = {tokens};
-    t_command cmd = {0};
-    
-    parse_command(&parser, &cmd);
-    print_command(&cmd);
-    free(cmd.args);
-    free_tokens(tokens);
-}
 
 // int main()
 // {

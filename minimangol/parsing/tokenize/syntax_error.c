@@ -16,16 +16,6 @@ static int ft_is_cmd(char *str)
     return (1);
 }
 
-/* Check token type */
-// int is_operator_token(t_token_type type)
-// {
-//     if (type == TOKEN_PIPE || type == TOKEN_AND || type == TOKEN_OR ||
-//         type == TOKEN_REDIR_IN || type == TOKEN_REDIR_OUT || 
-//         type == TOKEN_APPEND || type == TOKEN_HEREDOC)
-//         return (1);≠≠≠
-//     return (0);
-// }
-
 /* Syntax error check before parsing */
 int check_syntax_errors(t_token *tokens)
 {

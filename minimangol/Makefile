@@ -1,14 +1,12 @@
 NAME = minishell
 
 SOURCES = \
-	parsing/tokenize/token.c \
-	parsing/error/error.c \
-	parsing/tokenize/santax_error.c
+	parsing/tokenize/lexer.c parsing/tree/tree_wdakxi.c \
 
 OBJECTS = $(SOURCES:.c=.o)
 
 CC = cc
-CFLAGS = -Wall -I$(BREW_PREFIX)/opt/readline/include
+CFLAGS = -Wall -I$(BREW_PREFIX)/opt/readline/include -Werror -Wextra -w
 LDFLAGS = -L$(BREW_PREFIX)/opt/readline/lib
 LIBS = -lreadline
 LIBFT = libft/libft.a
