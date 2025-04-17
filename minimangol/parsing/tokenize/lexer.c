@@ -1,11 +1,11 @@
 #include "../../minishell.h"
 
-static int is_operator(char *token);
+// int is_operator(char *token);
 
 void flag_error(char *str)
 {
-    // ft_putstr_fd("minishell: syntax error near unexpected token `", 2);
-    // ft_putstr_fd(str, 2);
+    ft_putstr_fd("minishell: syntax error near unexpected token `", 2);
+    ft_putstr_fd(str, 2);
     ft_putstr_fd("'\n", 1);
     // prompt();// to do
 }
@@ -27,7 +27,7 @@ void check_s_char(char **token_value, int *token_type)
     else if (ft_strcmp(*token_value, ")") == 0)
         *token_type = TOKEN_RPAREN;
     else
-        *token_type = TOKEN_COMMAND;
+        *token_type = TOKEN_WORD;
 }
 void free_tokens(t_token *tokens)
 {
@@ -56,18 +56,18 @@ void create_token(t_token **head, t_token **current, char *value, int type)
     *current = new_token;
 }
 
-static int	is_operator(char *token)
-{
-	return (ft_strcmp(token, "|") == 0
-		|| ft_strcmp(token, "&&") == 0
-		|| ft_strcmp(token, "||") == 0
-		|| ft_strcmp(token, ">") == 0
-		|| ft_strcmp(token, "<") == 0
-		|| ft_strcmp(token, ">>") == 0
-		|| ft_strcmp(token, "<<") == 0
-		|| ft_strcmp(token, "(") == 0
-		|| ft_strcmp(token, ")") == 0);
-}
+// int	is_operator(char *token)
+// {
+// 	return (ft_strcmp(token, "|") == 0
+// 		|| ft_strcmp(token, "&&") == 0
+// 		|| ft_strcmp(token, "||") == 0
+// 		|| ft_strcmp(token, ">") == 0
+// 		|| ft_strcmp(token, "<") == 0
+// 		|| ft_strcmp(token, ">>") == 0
+// 		|| ft_strcmp(token, "<<") == 0
+// 		|| ft_strcmp(token, "(") == 0
+// 		|| ft_strcmp(token, ")") == 0);
+// }
 
 static void	add_token(t_token **head, t_token **curr, char *value, int type)
 {
@@ -205,18 +205,18 @@ void test_parser(char *input)
     free_tokens(tokens);
 }
 
-int main()
-{
-    char *input = "ls -la > ";
-    t_token *tokens = tokenize(input);
-    check_syntax_errors(tokens);
-    t_parser parser = {tokens};
-    t_ast *ast = parse(&parser);
+// int main()
+// {
+//     char *input = "ls -la > ";
+//     t_token *tokens = tokenize(input);
+//     check_syntax_errors(tokens);
+//     t_parser parser = {tokens};
+//     t_ast *ast = parse(&parser);
     
-    print_ast(ast, 0);
-    // cleaner(); // to do!!    
-    return 0;
-}
+//     print_ast(ast, 0);
+//     // cleaner(); // to do!!    
+//     return 0;
+// }
 // void print_tokens(t_token *tokens)
 // {
 //     t_token *current = tokens;

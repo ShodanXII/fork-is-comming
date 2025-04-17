@@ -11,17 +11,16 @@
 
 typedef enum e_token_type
 {
- TOKEN_WORD = 0,
- TOKEN_COMMAND ,
- TOKEN_PIPE ,
- TOKEN_AND ,
- TOKEN_OR ,
+ TOKEN_WORD ,
+ TOKEN_RPAREN ,   // )
  TOKEN_REDIR_IN,   // <
  TOKEN_REDIR_OUT ,  // >
  TOKEN_APPEND ,   // >>
  TOKEN_HEREDOC ,   // <<
  TOKEN_LPAREN ,   // (
- TOKEN_RPAREN ,   // )
+ TOKEN_PIPE ,
+ TOKEN_OR ,
+ TOKEN_AND ,
 }   t_token_type;
 
 typedef struct s_needed t_needed;
@@ -35,6 +34,7 @@ typedef struct s_stack_cmd t_stack_cmd;
 
 struct s_token
 {
+	char		*value;
 	t_token_type    type;
 	struct s_token  *next;
 };
@@ -79,25 +79,12 @@ struct s_needed
 
 struct s_ast
 {
-	enum
-	{
-		AST_COMMAND,
-		AST_PIPE,
-		AST_AND,
-		AST_OR,
-		AST_SUBSHELL,
-		AST_REDIR,
-		AST_SQUOTE,
-		AST_DQUOTE,
-	}e_type ;
 	t_token_type  e_token_type;
 	int           e_precedence;
 	char         *cmd;
 	char        **args;
 	int           arg_count;
 	int           fd[2];
-	t_stack		*stack;
-	int           is_subshell;
 	t_redir		*redirs;
 	struct s_ast *left;
 	struct s_ast *right;
@@ -115,6 +102,7 @@ int check_syntax_errors(t_token *tokens);
 // void        free_ast(t_ast *node);
 t_ast		*pop(t_stack **stack);
 void		push(t_stack **stack, t_token *token);
+t_ast *function_lmli7a(t_token *tokens, t_token *fin_t7bs);
 void		free_stack(t_stack **stack);
 t_ast		*peek(t_stack *stack);
 // Syntax Error Handling
@@ -124,6 +112,9 @@ t_ast		*peek(t_stack *stack);
 // Utils (if needed)
 char        *ft_strdup(const char *s1);
 t_ast *parse(t_parser *parser);
+void compare(t_parser *stacks, t_token *tokens);
+int get_precedence(int token_type);
 void print_ast(t_ast *node, int level);
+int is_operator(t_token *token);
 
 #endif
