@@ -132,7 +132,7 @@ void free_ast(t_ast *node)
 
 int main()
 {
-	t_token *tokens = tokenize("ls -l | cat j");
+	t_token *tokens = tokenize("echo hi && ls -l | cat j la");
 	t_token *fin_t7bs = NULL;
 	t_ast *head = function_lmli7a(tokens, NULL);
     print_ast_horizontal(head, 0);
