@@ -6,47 +6,6 @@ void handle_word(t_token **head, t_token **curr, char *input, int *i);
 // static void parse_command(t_parser *parser, t_command *cmd);
 void handle_operator(t_token **head, t_token **curr, char *input, int *i);
 
-
-// void flag_error(char *str)
-// {
-// 	ft_putstr_fd("minishell: syntax error near unexpected token `", 2);
-// 	ft_putstr_fd(str, 2);
-// 	ft_putstr_fd("'\n", 1);
-// }
-
-// void ft_free_split(char **tokens)
-// {
-// 	int i = 0;
-// 	while (tokens[i])
-// 	{
-// 		free(tokens[i]);
-// 		i++;
-// 	}
-// 	free(tokens);
-// }
-
-// void check_s_char(char **token_value, int *token_type)
-// {
-// 	if (ft_strcmp(*token_value, "(") == 0)
-// 		*token_type = TOKEN_LPAREN;
-// 	else if (ft_strcmp(*token_value, ")") == 0)
-// 		*token_type = TOKEN_RPAREN;
-// 	else
-// 		*token_type = TOKEN_WORD;
-// }
-
-// void free_tokens(t_token *tokens)
-// {
-// 	t_token *current = tokens;
-// 	while (current)
-// 	{
-// 		t_token *next = current->next;
-// 		free(current->value);
-// 		free(current);
-// 		current = next;
-// 	}
-// }
-
 void create_token(t_token **head, t_token **current, char *value, int type)
 {
 	t_token *new_token = malloc(sizeof(t_token));
