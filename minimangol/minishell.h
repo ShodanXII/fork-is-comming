@@ -8,6 +8,9 @@
 # include <readline/readline.h>
 # include "libft/libft.h"
 # include <readline/history.h>
+# include <fcntl.h>
+#include <sys/types.h>
+#include <sys/wait.h>
 
 typedef enum e_token_type
 {
@@ -83,8 +86,10 @@ struct s_ast
 	int           e_precedence;
 	char         *cmd;
 	char        **args;
+	int			is_wait;
+	pid_t		pid;
 	int           arg_count;
-	int           fd[2];
+	int           *ar_pipe;
 	t_redir		*redirs;
 	struct s_ast *left;
 	struct s_ast *right;
@@ -103,8 +108,11 @@ int check_syntax_errors(t_token *tokens);
 t_ast		*pop(t_stack **stack);
 void		push(t_stack **stack, t_token *token);
 t_ast *function_lmli7a(t_token *tokens, t_token *fin_t7bs);
+t_token *tokenize_compat(char *line);
 void		free_stack(t_stack **stack);
+static void add_token(t_token **head, t_token **curr, char *value, int type);
 t_ast		*peek(t_stack *stack);
+static void determine_token_type(char *token_value, int *token_type);
 // Syntax Error Handling
 // int         has_syntax_error(t_token *tokens);
 // void        print_syntax_error(t_token *token);

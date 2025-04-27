@@ -1,30 +1,48 @@
 NAME = minishell
 
+# Source files with proper handling
 SOURCES = \
-	parsing/tokenize/lexer.c parsing/tree/tree_wdakxi.c \
+	parsing/tokenize/lexer.c \
+	parsing/tree/tree_wdakxi.c
 
 OBJECTS = $(SOURCES:.c=.o)
 
-CC = cc
-CFLAGS = -Wall -I$(BREW_PREFIX)/opt/readline/include -Werror -Wextra -w
-LDFLAGS = -L$(BREW_PREFIX)/opt/readline/lib
-LIBS = -lreadline
-LIBFT = libft/libft.a
+CC = gcc
 
-BREW_PREFIX := $(shell brew --prefix)
+LIBFT_DIR = ./libft
+LIBFT = $(LIBFT_DIR)/libft.a
+
+# Handle readline dependency
+READLINE_INCLUDE = -I/usr/include/readline
+READLINE_LIB = -lreadline
 
 all: $(NAME)
 
-$(NAME): $(OBJECTS) $(LIBFT)
-	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $^ $(LIBS)
+# Rule to ensure libft is compiled first
+$(LIBFT):
+	@echo "Building libft library..."
+	@$(MAKE) -C $(LIBFT_DIR)
 
-%.o: %.c
-	$(CC) $(CFLAGS) -c $< -o $@
+# Main rule to build the executable - link with explicit -L path
+$(NAME): $(LIBFT) $(OBJECTS)
+	@echo "Linking executable..."
+	$(CC)  -o $(NAME) $(OBJECTS) -L$(LIBFT_DIR) -lft $(READLINE_LIB)
+
+# Rule to compile individual object files - fix include path
+%.o: %.c minishell.h
+	@echo "Compiling $<..."
+	$(CC)  -I$(LIBFT_DIR) $(READLINE_INCLUDE) -c $< -o $@
 
 clean:
-	rm -f $(OBJECTS)
+	@echo "Cleaning object files..."
+	@rm -f $(OBJECTS)
+	@$(MAKE) -C $(LIBFT_DIR) clean
 
 fclean: clean
-	rm -f $(NAME)
+	@echo "Removing executable..."
+	@rm -f $(NAME)
+	@$(MAKE) -C $(LIBFT_DIR) fclean
 
 re: fclean all
+
+.PHONY: all clean fclean re
