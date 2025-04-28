@@ -11,6 +11,7 @@
 # include <fcntl.h>
 #include <sys/types.h>
 #include <sys/wait.h>
+#include <stdbool.h>
 
 typedef enum e_token_type
 {
@@ -97,32 +98,26 @@ struct s_ast
 } ;
 
 // Tokenizer
-t_token     *tokenize(char *input);
 // void        free_tokens(t_token *tokens);
 void        print_tokens(t_token *tokens); // For debug
-
+void	ana_m9wd(t_ast *node);
 // Parser
 void print_tokens(t_token *tokens);
 int check_syntax_errors(t_token *tokens);
 // void        free_ast(t_ast *node);
-t_ast		*pop(t_stack **stack);
-void		push(t_stack **stack, t_token *token);
 t_ast *function_lmli7a(t_token *tokens, t_token *fin_t7bs);
 t_token *tokenize_compat(char *line);
-void		free_stack(t_stack **stack);
 static void add_token(t_token **head, t_token **curr, char *value, int type);
-t_ast		*peek(t_stack *stack);
+int	execute_tree(t_ast *node, int fd, int outfd, int cs, char **env);
 static void determine_token_type(char *token_value, int *token_type);
+t_token *lexer(char *input);
 // Syntax Error Handling
 // int         has_syntax_error(t_token *tokens);
 // void        print_syntax_error(t_token *token);
 
 // Utils (if needed)
 char        *ft_strdup(const char *s1);
-t_ast *parse(t_parser *parser);
-void compare(t_parser *stacks, t_token *tokens);
 int get_precedence(int token_type);
-void print_ast(t_ast *node, int level);
 int is_operator(t_token *token);
 
 #endif

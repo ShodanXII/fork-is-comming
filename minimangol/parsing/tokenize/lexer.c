@@ -21,6 +21,8 @@ void create_token(t_token **head, t_token **current, char *value, int type)
 	*current = new_token;
 }
 
+
+
 static void add_token(t_token **head, t_token **curr, char *value, int type)
 {
 	t_token *new;
@@ -38,6 +40,59 @@ static void add_token(t_token **head, t_token **curr, char *value, int type)
 }
 
 
+void handle_redir(char **args, int *j, t_token **tokens, t_token **current)
+{
+    t_redir *redir = NULL;
+    redir = malloc(sizeof(t_redir));
+    if (!redir)
+        return;
+    redir->file = NULL;
+    redir->type = 0;
+    redir->next = NULL;
+    char *value;    
+    if (args[*j][0] == '>')
+    {
+        if (args[*j][1] && args[*j][1] == '>')
+        {
+            redir->type = TOKEN_APPEND;
+            value = ">>";
+        } 
+        else 
+        {
+            redir->type = TOKEN_REDIR_OUT; 
+            value = ">";
+        }
+    } 
+    else if (args[*j][0] && args[*j][0] == '<')
+    {
+        if (args[*j][1] == '<') 
+        {
+            redir->type = TOKEN_HEREDOC;
+            value = "<<";
+        } 
+        else 
+        {
+            redir->type = TOKEN_REDIR_IN;
+            value = "<";
+        }
+    }
+    add_token(tokens, current, value, redir->type);
+    (*j)++;
+    if (args[*j] != NULL && !ft_strchr(args[*j], '|') && !ft_strchr(args[*j], '&') && 
+    !ft_strchr(args[*j], '(') && !ft_strchr(args[*j], ')') && 
+    !ft_strchr(args[*j], '>') && !ft_strchr(args[*j], '<'))
+    {
+        redir->file = ft_strdup(args[*j]);
+        (*j)++;
+    } 
+    else 
+    {
+        // makaynx file
+        // Handle error to do
+        (*j)--; // Stay at current position for next iteration
+    }
+}
+
 
 
 void print_tokens(t_token *tokens)
@@ -52,12 +107,6 @@ void print_tokens(t_token *tokens)
 	printf("-----------------\n");
 }
 
-// int ft_isspace(char c)
-// {
-//     if (c == ' ' || c == '\t' || c == '\n')
-//         return (1);
-//     return (0);
-// }
 
 int count_word(char *line)
 {
@@ -73,6 +122,7 @@ int count_word(char *line)
 
 static void determine_token_type(char *token_value, int *token_type)
 {
+    t_redir *redir;
     if (ft_strcmp(token_value, "|") == 0)
         *token_type = TOKEN_PIPE;
     else if (ft_strcmp(token_value, "||") == 0)
@@ -209,7 +259,6 @@ t_token *tokenize_compat(char *line)
             }
         }
     }
-    
     // Add the final token if there is one
     if (new_token)
     {
@@ -234,6 +283,48 @@ void free_tokens(t_token *tokens)
 	}
 } 
 
+
+t_token *lexer(char *input)
+{
+    t_token *tokens = NULL;
+    t_token *current = NULL;
+    char **args = ft_split(input, ' ');
+    int j = 0;
+    
+    while (args[j] != NULL)
+    {
+        if (args[j][0] == '|' && args[j][1] == '\0')
+            add_token(&tokens, &current, args[j], TOKEN_PIPE);
+        else if (args[j][0] == '>' || args[j][0] == '<')
+        {
+            handle_redir(args, &j, &tokens, &current);
+            // printf("gg\n");
+        }
+        else if (args[j][0] == '&' && args[j][1] == '\0')
+            add_token(&tokens, &current, args[j], TOKEN_AND);
+        // else if (ft_strchr(args[j], '"') || ft_strchr(args[j], '\''))
+        //     handle_quotes(&tokens, &current, args[j], &j);
+        else if (args[j][0] == '(')
+            add_token(&tokens, &current, args[j], TOKEN_LPAREN);
+        else if (args[j][0] == ')')
+            add_token(&tokens, &current, args[j], TOKEN_RPAREN);
+        else if (args[j][0] == '|' && args[j][1] == '|')
+            add_token(&tokens, &current, args[j], TOKEN_OR);
+        else if (args[j][0] == '&' && args[j][1] == '&')
+            add_token(&tokens, &current, args[j], TOKEN_AND);
+        else
+            add_token(&tokens, &current, args[j], TOKEN_WORD);        
+        if (args[j][0] != '>' && args[j][0] != '<' && 
+            !ft_strchr(args[j], '"') && !ft_strchr(args[j], '\''))
+            {
+                j++;
+                // printf("gg\n");
+            }
+            // printf("gg\n");
+    }
+    // free_args(args); to do
+    return tokens;
+}
 // int main()
 // {
 // 	char *input = "ls | cat";

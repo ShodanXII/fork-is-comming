@@ -7,7 +7,7 @@ RESET = \033[0m
 
 SOURCES = \
 	parsing/tokenize/lexer.c \
-	parsing/tree/tree_wdakxi.c
+	parsing/tree/tree_wdakxi.c parsing/tokenize/main.c \
 
 OBJECTS = $(SOURCES:.c=.o)
 

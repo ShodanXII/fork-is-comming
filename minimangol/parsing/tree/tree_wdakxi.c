@@ -20,6 +20,34 @@ int is_operator(t_token *token);
 // 	}
 // }
 
+
+static void handel_word(t_token *tokens)
+{
+	t_token *current = tokens;
+	while (current)
+	{
+		if (current->type == TOKEN_WORD && current->next && current->next->type == TOKEN_WORD)
+		{
+ 			// current->type = TOKEN_WORD; i need to merge them	as one token
+			// current->next->type = TOKEN_WORD;
+		}
+		current = current->next;
+	}
+}
+
+
+int static checker(t_token *tokens)
+{
+	t_token *current = tokens;
+	while (current)
+	{
+		if (current->type == TOKEN_WORD && current->next && current->next->type == TOKEN_WORD)
+			return 1;
+		current = current->next;
+	}
+	return 0;
+}
+
 static void free_ast(t_ast *node)
 {
     if (node == NULL)
@@ -83,55 +111,56 @@ t_ast *function_lmli7a(t_token *tokens, t_token *fin_t7bs)
 {
     if (!tokens)
         return NULL;
+		// printf("gg\n");
     t_ast *head = NULL;
     t_token *current = tokens;
     t_token *highest_ptr = current;
-    
+	if(checker(tokens) == 1)
+		handel_word(tokens);
     while(current && current != fin_t7bs)
     {
-        if(get_token_precedence(current) >= get_token_precedence(highest_ptr))
-            highest_ptr = current;
+		if(get_token_precedence(current) >= get_token_precedence(highest_ptr))
+		highest_ptr = current;
         current = current->next;
     }
-    
     if (highest_ptr)
     {
-        head = malloc(sizeof(t_ast));
+		head = malloc(sizeof(t_ast));
         if (!head)
-            return NULL;
-            
+		return NULL;
+		
         head->e_token_type = highest_ptr->type;
         if(highest_ptr->type == TOKEN_WORD)
         {
-            head->args = ft_split(highest_ptr->value, ' ');
+			head->args = ft_split(highest_ptr->value, ' ');
             if (!head->args)
             {
-                free(head);
+				free(head);
                 return NULL;
             }            
             head->cmd = ft_strdup(head->args[0]);
             if (!head->cmd)
             {
-                // int i = 0;
+				// int i = 0;
                 // while (head->args[i])
                 // {
-                //     free(head->args[i]);
-                //     i++;
-                // }
-                free(head->args);
-                free(head);
-                return NULL;
-            }
-        }
-        else
-        {
-            head->args = NULL;  // No args for operators
-            head->cmd = ft_strdup(highest_ptr->value);            
-            head->left = function_lmli7a(tokens, highest_ptr);
-            head->right = function_lmli7a(highest_ptr->next, fin_t7bs);
-        }
-    }
-    return head;
+					//     free(head->args[i]);
+					//     i++;
+					// }
+					free(head->args);
+					free(head);
+					return NULL;
+				}
+			}
+			else
+			{
+				head->args = NULL;  // No args for operators
+				head->cmd = ft_strdup(highest_ptr->value);            
+				head->left = function_lmli7a(tokens, highest_ptr);
+				head->right = function_lmli7a(highest_ptr->next, fin_t7bs);
+			}
+		}
+	return head;
 }
 
 
@@ -510,23 +539,23 @@ int	execute_tree(t_ast *node, int fd, int outfd, int cs, char **env)
 // 	// waiting(ast->right, counter);
 // }
 
-int main()
-{
-    extern char **environ;  // Use system environment
-    t_ast *ast;
-    t_token *tokens = tokenize_compat("ls -la | grep minishell.h");
-	// printf("tokens %s: \n", tokens->value);
-    if (!tokens)
-        return 1;
-	// printf("tokens %s: \n", tokens->value);
-    t_ast *head = function_lmli7a(tokens, NULL);
-	// printf("------>>>>>>>> %s: \n", head->left->cmd); 
-    // print_ast_horizontal(head, 0);  // Uncomment for debugging
-    execute_tree(head, 0, 1, -1, environ);
-    free_ast(head);
-    // Free tokens here
-    return 0;
-}
+// int main()
+// {
+//     extern char **environ;  // Use system environment
+//     t_ast *ast;
+//     t_token *tokens = tokenize_compat("ls -la | grep minishell.h");
+// 	// printf("tokens %s: \n", tokens->value);
+//     if (!tokens)
+//         return 1;
+// 	// printf("tokens %s: \n", tokens->value);
+//     t_ast *head = function_lmli7a(tokens, NULL);
+// 	// printf("------>>>>>>>> %s: \n", head->left->cmd); 
+//     // print_ast_horizontal(head, 0);  // Uncomment for debugging
+//     execute_tree(head, 0, 1, -1, environ);
+//     free_ast(head);
+//     // Free tokens here
+//     return 0;
+// }
 
 
 // && || | cmd redirection
