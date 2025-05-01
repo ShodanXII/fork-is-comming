@@ -111,7 +111,6 @@ t_ast *function_lmli7a(t_token *tokens, t_token *fin_t7bs)
 {
     if (!tokens)
         return NULL;
-		// printf("gg\n");
     t_ast *head = NULL;
     t_token *current = tokens;
     t_token *highest_ptr = current;
@@ -402,7 +401,6 @@ int execute_command(t_ast *node, int infd, int outfd, int cs, char **env)
     if (!node->pid)
     {
         close(cs);
-
         handle_redirection(node, &infd, &outfd);
         if (infd)
         {

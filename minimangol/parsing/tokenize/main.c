@@ -35,7 +35,7 @@ int main(int ac, char **av, char **env)
     //         // free_tokens(tokens);
     //         // continue;
     //     }
-        // head = function_lmli7a(tokens, NULL);
+        head = function_lmli7a(tokens, NULL);
         // printf("------>>>>>>>> %s: \n", head->left->args[0]);
             // free_tokens(tokens);
             // continue;

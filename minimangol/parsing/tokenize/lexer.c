@@ -10,30 +10,58 @@ static void add_heredoc(t_redir **head, char *value, int type);
 
 
 
+// Creates and fills a new redirection node
+t_redir *create_redir_node(t_token_type type, char *file)
+{
+    t_redir *new_redir = malloc(sizeof(t_redir));
+    if (!new_redir)
+        return NULL;
+    new_redir->file = ft_strdup(file);
+    if (!new_redir->file) 
+	{
+        free(new_redir);
+        return NULL;
+    }
+    new_redir->type = type;
+    new_redir->next = NULL;
+    return new_redir;
+}
+
+// Handles the redirection tokens and builds the redirection list
 t_redir *handle_redir(t_token *tokens)
 {
-	t_redir *redir_head = NULL;
-	t_redir *redir_current = NULL;
-	t_token *current = tokens;
-	
-	while(current && current->next)
-	{
-		if((current->type == TOKEN_REDIR_IN || 
-			current->type == TOKEN_REDIR_OUT || 
-			current->type == TOKEN_HEREDOC || 
-			current->type == TOKEN_APPEND) && 
-		   current->next->value)
-		{
-			add_herdoc(&redir_head, &current);
-			current = current->next->next;
-		}
-		else
-		{
-			current = current->next;
-		}
-	}
-	
-	return redir_head;
+    t_redir *redir_head = NULL;
+    t_redir *redir_current = NULL;
+    t_token *current = tokens;
+	t_redir *new_redir = NULL;
+    
+    while (current && current->next)
+    {
+        if ((current->type == TOKEN_REDIR_IN || 
+             current->type == TOKEN_REDIR_OUT || 
+             current->type == TOKEN_HEREDOC || 
+             current->type == TOKEN_APPEND) && 
+            current->next->value)
+        {
+            new_redir = create_redir_node(current->type, current->next->value);
+            if (!new_redir)
+                return redir_head;            
+            if (redir_head == NULL)
+			{
+                redir_head = new_redir;
+                redir_current = new_redir;
+            } 
+			else 
+			{
+                redir_current->next = new_redir;
+                redir_current = new_redir;
+            }            
+            current = current->next->next;
+        }
+        else
+            current = current->next;
+    }
+    return redir_head;
 }
 
 void create_token(t_token **head, t_token **current, char *value, int type)
@@ -117,8 +145,6 @@ static void type_define(char **args, t_token **tokens)
 			add_token(tokens, &current, args[j], TOKEN_OR);
 		else if(ft_strcmp(args[j], "|") == 0)
 			add_token(tokens, &current, args[j], TOKEN_PIPE);
-		else if(redi)
-			add_red_file(args[j], &redi);
 		else
 			add_token(tokens, &current, args[j], TOKEN_WORD);        
 		j++;
@@ -285,13 +311,13 @@ void free_tokens(t_token *tokens)
 
 t_token *lexer(char *input)
 {
-	t_redir *redir = NULL
+	t_redir *redir = NULL;
 	t_token *tokens = NULL;
 	t_token *current = NULL;
 	char **args = ft_split(input, ' ');
 	int j = 0;
 	type_define(args , &tokens);
-	redir = handle_redir(&tokens);
+	redir = handle_redir(tokens);
 	tokens = handle_word(tokens);
 	// printf("---->>>>%d\n", tokens->type);
 	
