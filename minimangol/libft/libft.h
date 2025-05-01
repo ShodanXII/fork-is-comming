@@ -10,17 +10,19 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef LIBFT_H
+# ifndef LIBFT_H
 # define LIBFT_H
 
 # include <stdlib.h>
 # include <unistd.h>
 
 void				ft_bzero(void *s, size_t n);
+char				*ft_strcat(char *dest, char *src);
 int					ft_isalnum(int c);
 int					ft_isalpha(int c);
 int					ft_isascii(int c);
 int					ft_isdigit(int c);
+char				*ft_strcpy(char *s1, char *s2);
 int					ft_isprint(int c);
 size_t				ft_strlen(const char *s);
 int					ft_tolower(int c);

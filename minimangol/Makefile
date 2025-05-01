@@ -6,7 +6,7 @@ BLUE = \033[0;34m
 RESET = \033[0m
 
 SOURCES = \
-	parsing/tokenize/lexer.c \
+	parsing/tokenize/lexer.c parsing/error/error.c \
 	parsing/tree/tree_wdakxi.c parsing/tokenize/main.c \
 
 OBJECTS = $(SOURCES:.c=.o)

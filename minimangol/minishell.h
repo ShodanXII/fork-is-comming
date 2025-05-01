@@ -110,6 +110,7 @@ t_token *tokenize_compat(char *line);
 static void add_token(t_token **head, t_token **curr, char *value, int type);
 int	execute_tree(t_ast *node, int fd, int outfd, int cs, char **env);
 static void determine_token_type(char *token_value, int *token_type);
+void	error(char *str);
 t_token *lexer(char *input);
 // Syntax Error Handling
 // int         has_syntax_error(t_token *tokens);

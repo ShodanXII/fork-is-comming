@@ -115,8 +115,6 @@ t_ast *function_lmli7a(t_token *tokens, t_token *fin_t7bs)
     t_ast *head = NULL;
     t_token *current = tokens;
     t_token *highest_ptr = current;
-	if(checker(tokens) == 1)
-		handel_word(tokens);
     while(current && current != fin_t7bs)
     {
 		if(get_token_precedence(current) >= get_token_precedence(highest_ptr))

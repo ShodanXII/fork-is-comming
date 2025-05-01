@@ -22,7 +22,6 @@ int main(int ac, char **av, char **env)
         // add_history(input);
 
         t_token *tokens = lexer("ls -la");
-        // printf("tokens %s: \n", tokens->value);
         // printf("gg\n");
 
     //     if (tokens == NULL)
@@ -36,7 +35,7 @@ int main(int ac, char **av, char **env)
     //         // free_tokens(tokens);
     //         // continue;
     //     }
-        head = function_lmli7a(tokens, NULL);
+        // head = function_lmli7a(tokens, NULL);
         // printf("------>>>>>>>> %s: \n", head->left->args[0]);
             // free_tokens(tokens);
             // continue;
