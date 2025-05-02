@@ -180,34 +180,30 @@ t_token *lexer(char *input)
 
 t_redir *handle_redir(t_token **tokens)
 {
-	t_token *curr = *tokens;
-	t_token *prev = NULL;
-	t_redir *redirs = NULL;
-	t_redir *redir_tail = NULL;
+    t_token *curr = *tokens;
+    t_redir *redirs = NULL;
+    t_redir *redir_tail = NULL;
 
-	while (curr)
-	{
-		if (is_redirection(curr->type) && curr->next)
-		{
-			t_redir *new_redir = create_redir_node(curr->type, curr->next->value);
-			if (!redirs)
-				redirs = new_redir;
-			else
-				redir_tail->next = new_redir;
-			redir_tail = new_redir;
-
-			t_token *to_remove = curr;
-			curr = curr->next->next;
-			remove_token(tokens, to_remove, prev);
-			remove_token(tokens, to_remove->next, to_remove);
-		}
-		else
-		{
-			prev = curr;
-			curr = curr->next;
-		}
-	}
-	return (redirs);
+    while (curr && curr->next)
+    {
+        if (is_redirection(curr->type))
+        {
+            t_redir *new_redir = create_redir_node(curr->type, curr->next->value);            
+            if (!redirs) {
+                redirs = new_redir;
+                redir_tail = new_redir;
+            } else {
+                redir_tail->next = new_redir;
+                redir_tail = new_redir;
+            }            
+            curr = curr->next->next;
+        }
+        else
+        {
+            curr = curr->next;
+        }
+    }
+    return redirs;
 }
 
 void print_redirs(t_redir *redirs)

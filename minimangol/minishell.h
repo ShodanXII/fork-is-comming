@@ -49,18 +49,6 @@ struct s_stack_cmd
 	struct s_stack *next;
 };
 
-struct s_parser
-{
-	t_token	*current;
-	t_stack	*stack;
-	t_stack_cmd	*stack_cmd;
-};
-
-struct s_stack
-{
-	t_ast *node;
-	struct s_stack *next;
-};
 
 struct s_redir
 {
@@ -110,8 +98,11 @@ t_token *tokenize_compat(char *line);
 static void add_token(t_token **head, t_token **curr, char *value, int type);
 int	execute_tree(t_ast *node, int fd, int outfd, int cs, char **env);
 static void determine_token_type(char *token_value, int *token_type);
+t_redir *handle_redir(t_token **tokens);
 void	error(char *str);
+// t_redir *handle_redir(t_token *tokens);
 t_token *lexer(char *input);
+t_token *merge_consecutive_words(t_token *tokens);
 // Syntax Error Handling
 // int         has_syntax_error(t_token *tokens);
 // void        print_syntax_error(t_token *token);
@@ -120,5 +111,10 @@ t_token *lexer(char *input);
 char        *ft_strdup(const char *s1);
 int get_precedence(int token_type);
 int is_operator(t_token *token);
+
+// Add these function declarations
+void print_redirs(t_redir *redirs);
+void free_redirs(t_redir *redirs);
+t_redir *extract_redirs_from_command(char **args);
 
 #endif
