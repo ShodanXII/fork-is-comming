@@ -1,6 +1,5 @@
 #include "../../minishell.h"
 
-// Prints the redirection list - useful for debugging
 void print_redirs(t_redir *redirs)
 {
     t_redir *current = redirs;
@@ -13,7 +12,6 @@ void print_redirs(t_redir *redirs)
     printf("-----------------------\n");
 }
 
-// Frees the redirection list
 void free_redirs(t_redir *redirs)
 {
     t_redir *current = redirs;
@@ -26,7 +24,6 @@ void free_redirs(t_redir *redirs)
     }
 }
 
-// Function to extract redirections from a command
 t_redir *extract_redirs_from_command(char **args)
 {
     t_redir *head = NULL;
