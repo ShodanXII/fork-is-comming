@@ -46,7 +46,8 @@ int execute_command_sequence(char *input)
         return 1;
     }
     redirs = handle_redir(&tokens);    
-    tokens = merge_consecutive_words(tokens);    
+    tokens = merge_consecutive_words(tokens);
+	// tokens = handel_paren(input);
     head = function_lmli7a(tokens, NULL);
     if (!head)
     {
@@ -94,13 +95,11 @@ int main(int ac, char **av, char **env)
 			printf("\thala!\n");
 			break;
 		}
-		
 		if (ft_strlen(input) == 0)
 		{
 			free(input);
 			continue;
 		}
-		
 		add_history(input);
 		execute_command_sequence(input);
 	}

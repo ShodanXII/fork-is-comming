@@ -1,5 +1,40 @@
 #include "../../minishell.h"
 
+static void add_tokens(t_token **head, char *value, int type);
+
+// static t_token handel_paren(char *input)
+// {
+// 	int i = 0;
+// 	int start = 0;
+// 	while(input[i])
+// 	{
+// 		if(input[i] == '(')
+// 		{
+
+// 		}
+// 	}
+// }
+
+char *ft_strjoin_char(char *str, char c)
+{
+	char    *new;
+	size_t  len;
+
+	if (!str)
+	{
+		new = malloc(2);
+		new[0] = c;
+		new[1] = '\0';
+		return new;
+	}
+	len = ft_strlen(str);
+	new = malloc(len + 2);
+	ft_strlcpy(new, str, len + 1);
+	new[len] = c;
+	new[len + 1] = '\0';
+	free(str);
+	return new;
+}
 
 void print_tokens(t_token *tokens)
 {
@@ -135,6 +170,25 @@ static int handle_quotes(char *input, int i, t_token **tokens, char quote)
 	return (i + 1);
 }
 
+static int handel_paren(char *input, int i, t_token **tokens)
+{
+	int start = i;
+	int flager = 0;
+	int beg = 0;
+	while(input[i])
+	{
+		if(input[i] == '(' || input[i] == ')')
+		{
+			if(input[i] == '(')
+			{
+				flager ++;
+				beg++;
+			}	
+		}
+	}
+		// to do
+}
+
 static int handle_word(char *input, int i, t_token **tokens)
 {
 	int start = i;
@@ -165,9 +219,10 @@ t_token *lexer(char *input)
 			result = handle_operator(input, i, &tokens);
 		else if (input[i] == '\'' || input[i] == '"')
 			result = handle_quotes(input, i, &tokens, input[i]);
+		// else if (input[i] == '(' || input[i] == ')') to do
+		// 	handle_paren(input, i, &tokens);
 		else
 			result = handle_word(input, i, &tokens);
-
 		if (result == -1)
 		{
 			// free_tokens(tokens);
@@ -180,30 +235,30 @@ t_token *lexer(char *input)
 
 t_redir *handle_redir(t_token **tokens)
 {
-    t_token *curr = *tokens;
-    t_redir *redirs = NULL;
-    t_redir *redir_tail = NULL;
+	t_token *curr = *tokens;
+	t_redir *redirs = NULL;
+	t_redir *redir_tail = NULL;
 
-    while (curr && curr->next)
-    {
-        if (is_redirection(curr->type))
-        {
-            t_redir *new_redir = create_redir_node(curr->type, curr->next->value);            
-            if (!redirs) {
-                redirs = new_redir;
-                redir_tail = new_redir;
-            } else {
-                redir_tail->next = new_redir;
-                redir_tail = new_redir;
-            }            
-            curr = curr->next->next;
-        }
-        else
-        {
-            curr = curr->next;
-        }
-    }
-    return redirs;
+	while (curr && curr->next)
+	{
+		if (is_redirection(curr->type))
+		{
+			t_redir *new_redir = create_redir_node(curr->type, curr->next->value);            
+			if (!redirs) {
+				redirs = new_redir;
+				redir_tail = new_redir;
+			} else {
+				redir_tail->next = new_redir;
+				redir_tail = new_redir;
+			}            
+			curr = curr->next->next;
+		}
+		else
+		{
+			curr = curr->next;
+		}
+	}
+	return redirs;
 }
 
 void print_redirs(t_redir *redirs)
