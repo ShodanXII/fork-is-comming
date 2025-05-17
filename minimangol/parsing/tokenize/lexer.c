@@ -305,12 +305,14 @@ t_token *merge_consecutive_words(t_token *tokens)
 			current->value = merged;			
 			current->next = next->next;
 			free(next->value);
-			free(next);			
+			free(next);
+			printf("%s\n", current->value);
 		}
 		else
 		{
 			current = current->next;
 		}
 	}
+
 	return tokens;
 }
